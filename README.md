@@ -17,8 +17,8 @@ These natives let you allow or deny any memory patching performed by this plugin
 
 ```julia
 public static native func IsPatchingAllowed() -> Bool
-public static native func PreventPatching() -> Bool     // returns true if blocking is now active (idempotent)
-public static native func ReleasePatching() -> Bool     // returns true if patching is allowed again
+public static native func PreventPatching() -> Bool   // returns true if blocking is now active (idempotent)
+public static native func ReleasePatching() -> Bool   // returns true if patching is allowed again
 ```
 
 Semantics:
