@@ -15,7 +15,7 @@ Works with the latest **RED4ext**. All native functions are exposed to **RedScri
 ### 1) Patching gate (global write switch)
 These natives let you allow or deny any memory patching performed by this plugin, making it possible to hard-block Lock/Unlock/Toggle in certain moments.
 
-```swift
+```julia
 public static native func IsPatchingAllowed() -> Bool
 public static native func PreventPatching() -> Bool     // returns true if blocking is now active (idempotent)
 public static native func ReleasePatching() -> Bool     // returns true if patching is allowed again
@@ -29,7 +29,7 @@ Semantics:
 ### 2) FOV lock control
 Toggle the **3‑byte patch** that freezes the runtime FOV calculation. The patch location is found by scanning for a stable instruction pattern in `.text`.
 
-```swift
+```julia
 public static native func IsLocked() -> Bool
 public static native func Lock() -> Bool
 public static native func Unlock() -> Bool
@@ -45,14 +45,14 @@ Notes:
 Convert between engine’s **internal FOV** and the **display FOV** seen in the Graphics settings.<br>
 The mapping uses a **monotonic piecewise‑linear** curve handcrafted from measured values, and values between anchors are linearly interpolated.
 
-```swift
+```julia
 public static native func ConvertFormat(fov: Float, isSettingsFormat: Bool) -> Float
 ```
 - `isSettingsFormat = false` → interpret `fov` as **internal**, return **display** (UI) value.
 - `isSettingsFormat = true`  → interpret `fov` as **display** (UI), return **internal** value.
 
 RedScript Examples:
-```swift
+```julia
 let displayValue: Float = FovControl.ConvertFormat(68.2379837, false); // internal → display
 let engineValue: Float = FovControl.ConvertFormat(100.0, true );       // display  → internal
 ```
@@ -64,7 +64,7 @@ let engineValue: Float = FovControl.ConvertFormat(100.0, true );       // displa
 ### CameraComponent helpers
 Convenience helpers to **get/set FOV in display units** directly on camera components.
 
-```swift
+```julia
 @addMethod(CameraComponent)
 public func GetDisplayFOV() -> Float
 
@@ -78,7 +78,7 @@ public func SetDisplayFOV(displayFov: Float) -> Void
 ### Optional Codeware integration
 If **Codeware** is present, add light helpers to access the **TPP** camera from both `PlayerPuppet` and `VehicleComponent`:
 
-```swift
+```julia
 @addMethod(PlayerPuppet)
 public func GetTPPCameraComponent() -> wref<vehicleTPPCameraComponent>
 
