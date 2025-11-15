@@ -215,7 +215,7 @@ namespace
     /// \return true if Lock/Unlock/Toggle may modify memory.
     bool IsPatchingAllowed()
     {
-        return g_patchEnabled;
+        return g_patchEnabled && EnsureTarget();
     }
 
     /// Prevent any future Lock/Unlock/Toggle from patching memory.
