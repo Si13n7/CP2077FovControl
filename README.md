@@ -22,7 +22,7 @@ public static native func ReleasePatching() -> Bool   // returns true if patchin
 ```
 
 Semantics:
-- **IsPatchingAllowed**: `true` → writes are allowed; `false` → all write attempts are ignored.
+- **IsPatchingAllowed**: `true` → patching is supported and writes are allowed; `false` → all write attempts are ignored.
 - **PreventPatching**: sets the gate to **blocked**; safe to call repeatedly.
 - **ReleasePatching**: sets the gate to **allowed**; safe to call repeatedly.
 
