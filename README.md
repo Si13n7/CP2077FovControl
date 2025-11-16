@@ -1,4 +1,4 @@
-# FovControl
+# FOV Control
 
 Native **RED4ext** plugin for **Cyberpunk 2077** that provides:
 
@@ -16,9 +16,10 @@ Works with the latest **RED4ext**. All native functions are exposed to **RedScri
 These natives let you allow or deny any memory patching performed by this plugin, making it possible to hard-block Lock/Unlock/Toggle in certain moments.
 
 ```julia
-public static native func IsPatchingAllowed() -> Bool
-public static native func PreventPatching() -> Bool   // returns true if blocking is now active (idempotent)
-public static native func ReleasePatching() -> Bool   // returns true if patching is allowed again
+public native class FovControl extends IScriptable {
+    public static native func IsPatchingAllowed() -> Bool
+    public static native func PreventPatching() -> Bool   // returns true if blocking is now active (idempotent)
+    public static native func ReleasePatching() -> Bool   // returns true if patching is allowed again
 ```
 
 Semantics:
@@ -32,10 +33,10 @@ Semantics:
 Toggle the **3‑byte patch** that freezes the runtime FOV calculation. The patch location is found by scanning for a stable instruction pattern in `.text`.
 
 ```julia
-public static native func IsLocked() -> Bool
-public static native func Lock() -> Bool
-public static native func Unlock() -> Bool
-public static native func ToggleLock() -> Bool
+    public static native func IsLocked() -> Bool
+    public static native func Lock() -> Bool
+    public static native func Unlock() -> Bool
+    public static native func ToggleLock() -> Bool
 ```
 
 Notes:
@@ -48,7 +49,8 @@ Convert between engine’s **internal FOV** and the **display FOV** seen in the 
 The mapping uses a **monotonic piecewise‑linear** curve handcrafted from measured values, and values between anchors are linearly interpolated.
 
 ```julia
-public static native func ConvertFormat(fov: Float, isSettingsFormat: Bool) -> Float
+    public static native func ConvertFormat(fov: Float, isSettingsFormat: Bool) -> Float
+}
 ```
 - `isSettingsFormat = false` → interpret `fov` as **internal**, return **display** (UI) value.
 - `isSettingsFormat = true`  → interpret `fov` as **display** (UI), return **internal** value.
@@ -118,18 +120,18 @@ Notes:
 ## Requirements
 
 ### For users
-- **Cyberpunk 2077** (version 2.31)
-- **RED4ext** (loader)
+- [Cyberpunk 2077](https://www.gog.com/de/game/cyberpunk_2077) (version 2.31)
+- [RED4ext](https://github.com/wopss/RED4ext) (loader)
 
 ### For developers (to build from source)
-- **Windows** (x64)
-- **CMake ≥ 3.20**
-- **MSVC 2022** (or compatible)
-- **RED4ext.SDK** (latest)
+- [Windows (x64)](https://www.microsoft.com/de-de/software-download)
+- [CMake ≥ 3.20](https://cmake.org/cmake/help/v3.20/release/3.20.html)
+- [MSVC 2022](https://aka.ms/vc14/vc_redist.x64.exe) (or compatible)
+- [RED4ext.SDK](https://github.com/WopsS/RED4ext.SDK) (latest)
 
 **Optional**
-- **CET** (Lua) for quick testing
-- **Codeware** (for the optional CameraComponent helpers)
+- [Cyber Engine Tweaks](https://github.com/maximegmd/CyberEngineTweaks) for quick testing
+- [Codeware](https://github.com/psiberx/cp2077-codeware) (for the `CameraComponent` helpers)
 
 ---
 
