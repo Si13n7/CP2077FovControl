@@ -58,7 +58,7 @@ The mapping uses a **monotonic piecewise‑linear** curve handcrafted from measu
 REDscript Examples:
 ```julia
 let displayValue: Float = FovControl.ConvertFormat(68.2379837, false); // internal → display
-let engineValue: Float = FovControl.ConvertFormat(100.0, true );       // display  → internal
+let engineValue: Float = FovControl.ConvertFormat(100.0, true);        // display  → internal
 ```
 
 ---
@@ -122,6 +122,7 @@ Notes:
 ### For users
 - [Cyberpunk 2077](https://www.gog.com/de/game/cyberpunk_2077) (version 2.31)
 - [RED4ext](https://github.com/wopss/RED4ext) (loader)
+- [REDscript](https://github.com/jac3km4/redscript) (library)
 
 ### For developers (to build from source)
 - [Windows (x64)](https://www.microsoft.com/de-de/software-download)
