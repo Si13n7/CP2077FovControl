@@ -6,7 +6,7 @@ Native **RED4ext** plugin for **Cyberpunk 2077** that provides:
 - A precise **FOV conversion** between the engine’s **internal FOV** and the **display FOV** shown in the game’s Graphics settings.
 - A global **patching gate** to temporarily block any memory writes (Lock/Unlock/Toggle).
 
-Works with the latest **RED4ext**. All native functions are exposed to **RedScript** and therefore callable from **CET**.
+Works with the latest **RED4ext**. All native functions are exposed to **REDscript** and therefore callable from **CET**.
 
 ---
 
@@ -55,7 +55,7 @@ The mapping uses a **monotonic piecewise‑linear** curve handcrafted from measu
 - `isSettingsFormat = false` → interpret `fov` as **internal**, return **display** (UI) value.
 - `isSettingsFormat = true`  → interpret `fov` as **display** (UI), return **internal** value.
 
-RedScript Examples:
+REDscript Examples:
 ```julia
 let displayValue: Float = FovControl.ConvertFormat(68.2379837, false); // internal → display
 let engineValue: Float = FovControl.ConvertFormat(100.0, true );       // display  → internal
@@ -63,7 +63,7 @@ let engineValue: Float = FovControl.ConvertFormat(100.0, true );       // displa
 
 ---
 
-## RedScript integrations
+## REDscript integrations
 
 ### CameraComponent helpers
 Convenience helpers to **get/set FOV in display units** directly on camera components.
@@ -141,7 +141,7 @@ Notes:
    ```
    <Cyberpunk 2077>\red4ext\plugins\FovControl\FovControl.dll
    ```
-2. Place the RedScript file:
+2. Place the REDscript file:
    ```
    <Cyberpunk 2077>\r6\scripts\FovControl\FovControl.reds
    ```
@@ -162,8 +162,8 @@ FovControl/
     red4ext.sdk/           (RED4ext.SDK as submodule or local checkout)
   src/red4ext/
     main.cpp               (plugin code)
-  src/redscript/
-    FovControl.reds        (RedScript API)
+  src/REDscript/
+    FovControl.reds        (REDscript API)
 ```
 
 Typical build:
@@ -173,7 +173,7 @@ cmake -S . -B build -A x64 -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-The provided CMake script can stage the RedScript file into `bin/r6/scripts/FovControl/` and place plugin binaries into `bin/red4ext/FovControl/`.
+The provided CMake script can stage the REDscript file into `bin/r6/scripts/FovControl/` and place plugin binaries into `bin/red4ext/FovControl/`.
 
 ---
 
