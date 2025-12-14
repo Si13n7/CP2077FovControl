@@ -9,6 +9,8 @@ public native class FovControl extends IScriptable {
 	public static native func ToggleLock() -> Bool
 
 	public static native func ConvertFormat(fov: Float, isSettingsFormat: Bool) -> Float
+
+	public static native func Version() -> String
 }
 
 @addMethod(CameraComponent)
@@ -63,3 +65,109 @@ public func GetTPPCameraComponent() -> wref<vehicleTPPCameraComponent> { return 
 @if(!ModuleExists("Codeware"))
 @addMethod(VehicleComponent)
 public func GetCameraComponent() -> wref<vehicleTPPCameraComponent> { return null; }
+
+public class FovControlSchedulerTick extends DelayCallback {
+	public let m_scheduler: ref<FovControlScheduler>;
+
+	public func Call() -> Void {
+		if IsDefined(this.m_scheduler) {
+			this.m_scheduler.Tick();
+		}
+	}
+}
+
+public class FovControlScheduler extends IScriptable {
+	private let m_camComp: wref<CameraComponent>;
+	private let m_lastFov: Float;
+	private let m_active: Bool;
+	private let m_callback: ref<FovControlSchedulerTick>;
+
+	public func IsActive() -> Bool {
+		return this.m_active;
+	}
+
+	public func Start(camComp: wref<CameraComponent>) -> Bool {
+		if !IsDefined(camComp) {
+			return false;
+		}
+
+		if !FovControl.IsPatchingAllowed() || !FovControl.IsLocked() {
+			return false;
+		}
+
+		this.m_camComp = camComp;
+		this.m_active = true;
+		this.m_lastFov = -1.0;
+
+		if !IsDefined(this.m_callback) {
+			this.m_callback = new FovControlSchedulerTick();
+		}
+		this.m_callback.m_scheduler = this;
+
+		if !FovControl.Unlock() {
+			this.Stop();
+			return false;
+		}
+
+		this.Schedule();
+		return true;
+	}
+
+	private func Stop() -> Void {
+		this.m_active = false;
+		if IsDefined(this.m_callback) {
+			this.m_callback.m_scheduler = null;
+		}
+	}
+
+	private func Schedule() -> Void {
+		if !this.m_active {
+			return;
+		}
+
+		let ds = GameInstance.GetDelaySystem(GetGameInstance());
+		if !IsDefined(ds) {
+			this.Stop();
+			return;
+		}
+
+		ds.DelayCallback(this.m_callback, 0.3, false);
+	}
+
+	public func Tick() -> Void {
+		if !this.m_active {
+			return;
+		}
+
+		if !IsDefined(this.m_camComp) || !FovControl.IsPatchingAllowed() {
+			this.Stop();
+			return;
+		}
+
+		let current: Float = this.m_camComp.GetFOV();
+		if AbsF(current - this.m_lastFov) > 0.00001 {
+			this.m_lastFov = current;
+			this.Schedule();
+			return;
+		}
+
+		if !FovControl.Lock() {
+			return;
+		}
+
+		this.Stop();
+	}
+}
+
+@addField(CameraComponent)
+private let m_fovControlScheduler: ref<FovControlScheduler>;
+
+@addMethod(CameraComponent)
+public func PendingSetFOV() -> Bool {
+	if IsDefined(this.m_fovControlScheduler) && this.m_fovControlScheduler.IsActive() {
+		return false;
+	}
+
+	this.m_fovControlScheduler = new FovControlScheduler();
+	return this.m_fovControlScheduler.Start(this);
+}

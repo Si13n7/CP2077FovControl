@@ -1,9 +1,26 @@
-#include <RED4ext/RED4ext.hpp>
-#include <Windows.h>
+#include <RED4ext/Api/EMainReason.hpp>
+#include <RED4ext/Api/PluginHandle.hpp>
+#include <RED4ext/Api/Runtime.hpp>
+#include <RED4ext/Api/Sdk.hpp>
+#include <RED4ext/Api/SemVer.hpp>
+#include <RED4ext/Api/v0/FileVer.hpp>
+#include <RED4ext/Api/v0/Logger.hpp>
+#include <RED4ext/Api/v0/PluginInfo.hpp>
+#include <RED4ext/Api/v0/Sdk.hpp>
+#include <RED4ext/Api/v0/SemVer.hpp>
+#include <RED4ext/Api/Version.hpp>
+#include <RED4ext/Common.hpp>
+#include <RED4ext/RTTISystem.hpp>
+#include <RED4ext/RTTITypes.hpp>
+#include <RED4ext/Scripting/Functions.hpp>
+#include <RED4ext/Scripting/IScriptable.hpp>
+#include <RED4ext/Scripting/Stack.hpp>
+#include <RED4ext/Scripting/Utils.hpp>
 #include <cstdint>
 #include <cstring>
+#include <Windows.h>
 
-/// Native FOV utility exposed to Redscript.
+/// Native FOV utility exposed to REDscript.
 /// Provides:
 /// - FOV lock control via code patch
 /// - Conversion between internal and display FOV values
@@ -33,6 +50,8 @@ namespace
         float internalFov;
         float displayFov;
     };
+
+    constexpr const char* kVersionStr = "2.31.1";
 
     // Patched (locked) pattern.
     constexpr uint8_t kPatOn[] = {
@@ -336,7 +355,7 @@ namespace
         return getY(fovTable[n - 1]);
     }
 
-    /// Generic Redscript wrapper for static Bool() functions without parameters.
+    /// Generic REDscript wrapper for static Bool() functions without parameters.
     /// \param ctx Script context (unused).
     /// \param frame Current call frame; advances code by one.
     /// \param out Destination for the bool result.
@@ -349,7 +368,7 @@ namespace
             *out = Fn();
     }
 
-    /// Redscript wrapper for:
+    /// REDscript wrapper for:
     ///   Float ConvertFormat(Float value, Bool inverse)
     /// \param ctx Script context (unused).
     /// \param frame Reads [value, inverse], advances code.
@@ -366,6 +385,19 @@ namespace
 
         if (out)
             *out = ConvertFormat(value, inverse);
+    }
+
+    /// REDscript wrapper for:
+    ///   String GetFileVersion()
+    /// \param ctx Script context (unused).
+    /// \param frame Advances the call frame by one instruction.
+    /// \param out Destination for the returned version string.
+    /// \param a4 Unused ABI parameter.
+    void RS_Version(IScriptable*, CStackFrame* frame, CString* out, int64_t)
+    {
+        frame->code++;
+        if (out)
+            *out = CString(kVersionStr);
     }
 
     /// Register FovControl RTTI type.
@@ -403,6 +435,10 @@ namespace
         cf->AddParam("Bool", "inverse");
         cf->SetReturnType("Float");
         s_type.RegisterFunction(cf);
+
+        auto* fv = CClassStaticFunction::Create(&s_type, "Version", "Version", &RS_Version, flags);
+        fv->SetReturnType("String");
+        s_type.RegisterFunction(fv);
     }
 }
 
