@@ -14,9 +14,7 @@ public native class FovControl extends IScriptable {
 }
 
 @addMethod(CameraComponent)
-public func GetDisplayFOV() -> Float {
-	return FovControl.ConvertFormat(this.GetFOV(), false);
-}
+public func GetDisplayFOV() -> Float = FovControl.ConvertFormat(this.GetFOV(), false);
 
 @addMethod(CameraComponent)
 public func SetDisplayFOV(displayFov: Float) -> Void {
@@ -60,11 +58,11 @@ public func GetCameraComponent() -> wref<vehicleTPPCameraComponent> {
 
 @if(!ModuleExists("Codeware"))
 @addMethod(PlayerPuppet)
-public func GetTPPCameraComponent() -> wref<vehicleTPPCameraComponent> { return null; }
+public func GetTPPCameraComponent() -> wref<vehicleTPPCameraComponent> = null
 
 @if(!ModuleExists("Codeware"))
 @addMethod(VehicleComponent)
-public func GetCameraComponent() -> wref<vehicleTPPCameraComponent> { return null; }
+public func GetCameraComponent() -> wref<vehicleTPPCameraComponent> = null
 
 public class FovControlSchedulerTick extends DelayCallback {
 	public let m_scheduler: ref<FovControlScheduler>;
@@ -131,7 +129,7 @@ public class FovControlScheduler extends IScriptable {
 			return;
 		}
 
-		ds.DelayCallback(this.m_callback, 0.3, false);
+		ds.DelayCallback(this.m_callback, 0.1, false);
 	}
 
 	public func Tick() -> Void {
@@ -161,6 +159,9 @@ public class FovControlScheduler extends IScriptable {
 
 @addField(CameraComponent)
 private let m_fovControlScheduler: ref<FovControlScheduler>;
+
+@addMethod(CameraComponent)
+public func IsPendingSchedulerActive() -> Bool = IsDefined(this.m_fovControlScheduler) && this.m_fovControlScheduler.IsActive();
 
 @addMethod(CameraComponent)
 public func PendingSetFOV() -> Bool {
